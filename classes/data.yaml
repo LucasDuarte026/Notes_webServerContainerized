@@ -1,0 +1,3 @@
+config:
+  username: luska
+  secret_file: /home/luska/Documents/classes/data.yaml
