@@ -1,5 +1,4 @@
 # Cloud Computing 2025
---
 
 ## Student:
-    🇧🇷 Lucas Sales Duarte 
+- 🇧🇷 Lucas Sales Duarte 
