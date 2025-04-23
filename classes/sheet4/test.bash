@@ -25,7 +25,7 @@ get_cmdline(){
     fi
     cat /proc/$1/cmdline | tr '\0 ' '\n\n' | head -1
 }
-
+echo charles teste
 echo -e "pid\t\tuid\t\tuname\t\tcmdline"
 echo -e "===\t\t===\t\t=====\t\t======"
 
