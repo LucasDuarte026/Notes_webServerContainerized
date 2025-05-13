@@ -6,8 +6,15 @@ app = Flask(__name__)
 
 @app.route('/')
 def main_page():
-    return render_template('index.html')
+    return render_template('create_page.html')
 
+@app.route('/search')
+def search_page():
+    return render_template('search_page.html')
+
+@app.route('/notesperuser')
+def user_page():
+    return render_template('user_page.html')
 
 
 
