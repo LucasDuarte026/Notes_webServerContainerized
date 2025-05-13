@@ -1,0 +1,5 @@
+FROM alpine:3.20
+
+RUN touch /home/flag.txt
+RUN echo "first tryout" > /home/flag.txt
+
