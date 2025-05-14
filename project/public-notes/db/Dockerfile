@@ -1,9 +1,4 @@
-FROM opensuse/leap:latest
-
-# Set environment variables for PostgreSQL
-# ENV POSTGRES_USER=luska026
-# ENV POSTGRES_PASSWORD=123456
-# ENV POSTGRES_DB=pn_database
+FROM opensuse/leap:15.5
 
 # Install PostgreSQL server and client
 RUN zypper update & zypper -n install postgresql postgresql-server postgresql-contrib
