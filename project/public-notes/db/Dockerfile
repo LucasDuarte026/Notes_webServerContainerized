@@ -18,9 +18,24 @@ USER root
 
 # Copy the PostgreSQL configuration file (pg_hba.conf) to allow connections
 COPY pg_hba.conf /var/lib/pgsql/data/pg_hba.conf
+# RUN mkdir -p /docker-entrypoint-initdb.d    
+# COPY init.sql /docker-entrypoint-initdb.d/
+
+# Switch to postgres user to perform PostgreSQL commands
+USER postgres
+    
+#  initialize the database and start the PostgreSQL server
+# RUN /usr/lib/postgresql/bin/postgres -D /var/lib/pgsql/data & \
+#     until /usr/lib/postgresql/bin/pg_isready -h localhost -p 5432; do \
+#         sleep 1; \
+#     done && \
+#     psql -U postgres -f /docker-entrypoint-initdb.d/init.sql
+
+# RUN pg_ctl -D /var/lib/pgsql/data stop
 
 # Expose the PostgreSQL port
 EXPOSE 5432
 
-USER postgres
 CMD ["/usr/lib/postgresql/bin/postgres", "-D", "/var/lib/pgsql/data"]
+
+ 

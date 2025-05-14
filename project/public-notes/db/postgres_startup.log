@@ -1,2 +1,0 @@
-2025-05-13 16:12:04.913 GMT [1] FATAL:  invalid value for parameter "log_destination": "'stderr'"
-2025-05-13 16:12:04.913 GMT [1] DETAIL:  Unrecognized key word: "'stderr'".

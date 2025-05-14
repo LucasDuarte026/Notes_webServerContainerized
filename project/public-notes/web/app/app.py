@@ -8,7 +8,7 @@ app.config['POSTGRES_HOST'] = 'localhost'
 app.config['POSTGRES_PORT'] = '5432'
 app.config['POSTGRES_DB'] = 'pn_database'
 app.config['POSTGRES_USER'] = 'lucas'
-app.config['POSTGRES_PASSWORD'] = '12345678Senhaunica#'
+app.config['POSTGRES_PASSWORD'] = '1234'
 
 def get_db_connection():
     conn = None
@@ -78,7 +78,64 @@ def create_note():
             cursor.close()
         conn.close()
 
+def config_database():
+   
+    conn = None
+    cur = None
+    try:
+        conn = sql.connect(
+            dbname="postgres", 
+            user="postgres",  
+            password="",
+            host="localhost",
+        )
+        conn.autocommit = True  
 
+        cur = conn.cursor()
+
+        cur.execute("CREATE DATABASE pn_database;")
+
+        cur.execute("CREATE USER lucas WITH PASSWORD '1234';")
+
+        cur.execute("ALTER DATABASE pn_database OWNER TO lucas;")
+
+        conn.close()  
+        conn = sql.connect( 
+            dbname="pn_database",
+            user="lucas",  
+            password="1234",
+            host="localhost",
+        )
+        cur = conn.cursor()
+
+     
+        cur.execute("""
+            CREATE TABLE notes (
+                tag NUMERIC(4) PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                text TEXT NOT NULL
+            );
+        """)
+
+        cur.execute("ALTER TABLE notes OWNER TO lucas;")
+
+        conn.commit()
+        print("Banco de dados, usuário e tabela criados com sucesso.")
+
+    except sql.Error as e:
+        print(f"Erro ao configurar o banco de dados: {e}")
+        if conn:
+            conn.rollback()  # Rollback em caso de erro
+
+    finally:
+        # Fecha o cursor e a conexão
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 if __name__ == '__main__':
     # Run the Flask app
+    print("Iniciando o servidor Flask...")
+    config_database()
     app.run(host='0.0.0.0', port=5000, debug=True)
