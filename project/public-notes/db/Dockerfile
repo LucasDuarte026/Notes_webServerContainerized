@@ -1,12 +1,12 @@
 FROM opensuse/leap:latest
 
 # Set environment variables for PostgreSQL
-ENV POSTGRES_USER=myuser
-ENV POSTGRES_PASSWORD=mypassword
-ENV POSTGRES_DB=mydatabase
+# ENV POSTGRES_USER=luska026
+# ENV POSTGRES_PASSWORD=123456
+# ENV POSTGRES_DB=pn_database
 
 # Install PostgreSQL server and client
-RUN zypper update& zypper -n in postgresql postgresql-server postgresql-contrib
+RUN zypper update & zypper -n install postgresql postgresql-server postgresql-contrib
 
 # Create the data directory and set permissions
 RUN mkdir -p /var/lib/pgsql/data && \

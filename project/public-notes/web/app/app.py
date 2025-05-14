@@ -1,8 +1,31 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify, request
+import psycopg2 as sql
+from psycopg2 import OperationalError, ProgrammingError
 
 app = Flask(__name__)
 
-# from app import routes
+app.config['POSTGRES_HOST'] = 'localhost'
+app.config['POSTGRES_PORT'] = '5432'
+app.config['POSTGRES_DB'] = 'pn_database'
+app.config['POSTGRES_USER'] = 'lucas'
+app.config['POSTGRES_PASSWORD'] = '12345678Senhaunica#'
+
+def get_db_connection():
+    conn = None
+    try:
+        conn = sql.connect(
+            host=app.config['POSTGRES_HOST'],
+            port=app.config['POSTGRES_PORT'],
+            database=app.config['POSTGRES_DB'],
+            user=app.config['POSTGRES_USER'],
+            password=app.config['POSTGRES_PASSWORD']
+        )
+        print("Successfully connected to the database!")  # Add a success message
+    except OperationalError as e:
+        print(f"Error connecting to the database: {e}")
+        # Consider logging the error for debugging
+    return conn
+
 
 @app.route('/')
 def main_page():
@@ -16,6 +39,44 @@ def search_page():
 def user_page():
     return render_template('user_page.html')
 
+
+
+@app.route('/create_note', methods=['POST'])
+def create_note():
+ 
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'Failed to connect to the database'}), 500
+
+    cursor = None
+    try:
+        data = request.get_json()
+        if not data or not all(key in data for key in ['tag', 'name', 'email', 'text']):
+            return jsonify({'error': 'Missing required data (tag, name, email, text)'}), 400
+
+        tag = data['tag']
+        name = data['name']
+        email = data['email']
+        text = data['text']
+
+        cursor = conn.cursor()
+        query = "INSERT INTO notes (tag, name, email, text) VALUES (%s, %s, %s, %s);"
+        cursor.execute(query, (tag, name, email, text))
+        conn.commit()
+        return jsonify({'message': 'Note successfully created'}), 201
+
+    except ProgrammingError as e:
+        if conn:
+            conn.rollback()
+        return jsonify({'error': f"Database error: {e}"}), 500
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        return jsonify({'error': f"An unexpected error occurred: {e}"}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        conn.close()
 
 
 if __name__ == '__main__':
