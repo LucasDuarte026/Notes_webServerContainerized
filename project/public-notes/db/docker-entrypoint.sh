@@ -1,10 +1,17 @@
 #!/bin/bash
 set -e
 
+DATA_DIR="/var/lib/pgsql/data"
+
+append_hba() {
+    grep -qF "$1" "$DATA_DIR/pg_hba.conf" || echo "$1" >> "$DATA_DIR/pg_hba.conf"
+}
+
+
 # Check if the database cluster is initialized
 if [ ! -f /var/lib/pgsql/data/PG_VERSION ]; then
     echo "Initializing PostgreSQL database cluster..."
-    rm -rf /var/lib/pgsql/data
+    # rm -rf /var/lib/pgsql/data
     /usr/lib/postgresql/bin/initdb -D /var/lib/pgsql/data
 
     echo "Starting temporary PostgreSQL server..."
@@ -20,6 +27,9 @@ if [ ! -f /var/lib/pgsql/data/PG_VERSION ]; then
 else
     echo "Database cluster already initialized."
 fi
+# Add rules for the 'lucas' user to access 'pn_database' securely
+append_hba "host    pn_database   lucas           0.0.0.0/0               scram-sha-256"
+append_hba "local   pn_database   lucas                                   scram-sha-256"
 
 echo "Starting PostgreSQL server..."
-exec /usr/lib/postgresql/bin/postgres -D /var/lib/pgsql/data
+exec /usr/lib/postgresql/bin/postgres -D /var/lib/pgsql/data -c listen_addresses='*'

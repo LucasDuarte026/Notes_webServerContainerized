@@ -9,7 +9,7 @@ RUN mkdir -p /var/lib/pgsql/data /run/postgresql /docker-entrypoint-initdb.d && 
     chown -R postgres:postgres /var/lib/pgsql /run/postgresql /docker-entrypoint-initdb.d
 
     
-COPY pg_hba.conf /var/lib/pgsql/data/pg_hba.conf
+# COPY pg_hba.conf /var/lib/pgsql/data/pg_hba.conf
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
