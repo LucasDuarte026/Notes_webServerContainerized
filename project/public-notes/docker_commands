@@ -1,0 +1,46 @@
+commands in  docker:
+
+ -- see the version of it
+	docker compose version 
+ -- see the images installed
+	docker images 
+ -- start the docker
+	 docker run -it --name class_test1 opensuse/leap /bin/bash 
+ -- 	 
+ 
+creating a new docker from a technology
+docker run --name mariadb -e MYSQL_ROOT_PASSWORD=1234 -d mariadb:latest
+
+
+OPENSUSE/LEAP
+ 	zypper install -y {application} (as apt for ubuntu) 
+
+
+
+
+
+
+
+ write 3 docker files, which one for 
+ base on pinterest - text
+	-- Application container (python)
+	-- Database (postgreql)
+	-- later - engine (proxy) 
+	
+
+debuild and relaunch all dockers
+	docker rm -f db_pn_container && \
+	docker rm -f web_pn_container && \
+		docker build ./db -t db_pn && \
+		docker build  ./web -t web_pn && \
+	docker run -d -p 5432:5432 --name db_pn_container db_pn:latest &&  \
+	docker run -d -p 5000:5000 --name web_pn_container web_pn:latest 
+		
+DataBase
+	docker run -d -p 5432:5432 --name db_pn_container db_pn:latest 
+WEBpage 
+	docker run -d -p 5000:5000 --name web_pn_container web_pn:latest 
+
+run the server 
+	postgres -D /var/lib/pgsql/data
+

@@ -6,10 +6,10 @@ RUN zypper --non-interactive update && \
 
 WORKDIR /app
 
-COPY app /app
+COPY ./app /app
 
 RUN pip3 install Flask
 
 EXPOSE 5000
-
+RUN ls -l /usr/bin/python3
 CMD ["python3", "/app/app.py"]

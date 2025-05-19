@@ -1,0 +1,35 @@
+version: '3.3'
+
+services:
+  db:
+    build: ./db
+    ports:
+      - "5432:5432"
+    # volumes:
+      # - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "" # Defina uma senha segura para produção
+      POSTGRES_DB: pn_database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: ./web
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: pn_database
+      POSTGRES_USER: lucas
+      POSTGRES_PASSWORD: "1234" # A senha que você definiu no init.sql
+    volumes:
+      - ./web/app:/app
+    command: python /app/app.py
+    restart: on-failure
