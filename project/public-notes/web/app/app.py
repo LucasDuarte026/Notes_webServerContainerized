@@ -4,7 +4,7 @@ from psycopg2 import OperationalError, ProgrammingError
 
 app = Flask(__name__)
 
-app.config['POSTGRES_HOST'] = 'localhost'
+app.config['POSTGRES_HOST'] = 'db'
 app.config['POSTGRES_PORT'] = '5432'
 app.config['POSTGRES_DB'] = 'pn_database'
 app.config['POSTGRES_USER'] = 'lucas'
