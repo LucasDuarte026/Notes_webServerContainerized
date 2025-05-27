@@ -85,6 +85,14 @@ def get_current_tag():
 def main_page():
     """Renders the main page for creating notes."""
     return render_template('create_page.html')
+@app.route('/search')
+def search_page():
+    """Renders the main page for searching notes."""
+    return render_template('search_page.html')
+@app.route('/notesperuser')
+def user_page():
+    """Renders the main page for displaying notes per user."""
+    return render_template('user_page.html')
 
 
 @app.route('/create_note', methods=['POST'])
@@ -161,6 +169,7 @@ def create_note():
 
 
     tag = get_current_tag()
+    tag+=1
     try:
         cursor = conn.cursor()
         query = "INSERT INTO notes (tag, title, name, email, text) VALUES (%s, %s, %s, %s, %s);"

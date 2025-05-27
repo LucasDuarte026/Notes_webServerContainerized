@@ -163,21 +163,19 @@
             document.getElementById(modalId).style.display = 'none';
         }
         
-        function send_data() {
+         function send_data() {
             const title = document.getElementById('title').value;
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const body_text = document.getElementById('body_text').value;
-            
-            // Create the data object to send
+
             const noteData = {
-                title: title,       
-                name: name, 
+                title: title,
+                name: name,
                 email: email,
                 text: body_text
             };
-            
-            // Make the POST request to your Flask endpoint
+
             fetch('/create_note', {
                 method: 'POST',
                 headers: {
@@ -187,14 +185,20 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    // Parse error message from Flask response
+                    return response.json().then(err => { throw new Error(err.error || 'Unknown error'); });
                 }
                 return response.json();
             })
             .then(data => {
                 console.log('Success:', data);
-                alert('Note created successfully!');
+                // Display success message, including the assigned tag if available
+                const assignedTag = data.tag ? ` (Tag: ${data.tag})` : '';
+                alert(`Note created successfully!${assignedTag}`);
                 closeModal('new_post');
+                // Optional: You might want to update a list of notes here
+                // instead of a full page reload for a smoother UX.
+                // For simplicity, a reload is fine for now.
                 location.reload();
             })
             .catch(error => {
@@ -202,7 +206,6 @@
                 alert('Error creating note: ' + error.message);
             });
         }
-        
         function remove_data() {
             const title = document.getElementById('remove_title').value;
             

@@ -7,7 +7,7 @@ CREATE TABLE notes (
     tag NUMERIC(4) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) NOT NULL,
     text TEXT NOT NULL
 );
 ALTER TABLE notes OWNER TO lucas;
