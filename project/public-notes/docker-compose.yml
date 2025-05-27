@@ -1,5 +1,4 @@
 services:
-
   web:
     container_name: web_pn
     build: 
@@ -9,6 +8,10 @@ services:
       - "5000:5000"
     networks:
       - pn-net
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["./wait-for-it.sh", "db:5432", "--", "python3", "app.py"]
 
   db:
     container_name: db_pn
@@ -23,7 +26,13 @@ services:
       - POSTGRES_DB=pn_database
     networks:
       - pn-net
-  
+    healthcheck: 
+      test: ["CMD-SHELL", "pg_isready -U lucas -d pn_database"] 
+      interval: 5s 
+      timeout: 5s 
+      retries: 5 
+      start_period: 10s 
+
 networks:
   pn-net:
     driver: bridge
