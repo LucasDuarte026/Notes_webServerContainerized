@@ -197,6 +197,49 @@ def create_note():
             conn.close()
 
 
+@app.route('/get_all_notes', methods=['GET'])
+def get_all_notes():
+    """
+    Fetches all notes from the database, ordered by tag, with a limit.
+    Returns them as a JSON array.
+    """
+    app.logger.info("Received request to fetch all notes.")
+    conn = get_db_connection()
+    if not conn:
+        app.logger.error("Failed to get database connection for fetching notes.")
+        return jsonify({'error': 'Failed to connect to the database.'}), 500
+
+    cursor = None
+    notes = []
+    try:
+        cursor = conn.cursor()
+        # Now 'tag' is the primary key, so we select 'tag' instead of 'id'
+        cursor.execute("SELECT tag, title, name, email, text FROM notes ORDER BY tag ASC LIMIT 80;")
+        column_names = [desc[0] for desc in cursor.description]
+
+        for row in cursor.fetchall():
+            note = dict(zip(column_names, row))
+            notes.append(note)
+
+        app.logger.info(f"Fetched {len(notes)} notes from the database.")
+        return jsonify(notes), 200
+
+    except ProgrammingError as e:
+        app.logger.error(f"Database programming error during notes fetch: {e}")
+        app.logger.exception("Full traceback for database programming error:")
+        return jsonify({'error': f"Database error: {e}"}), 500
+    except Exception as e:
+        app.logger.error(f"An unexpected error occurred during notes fetch: {e}")
+        app.logger.exception("Full traceback for unexpected error:")
+        return jsonify({'error': f"An unexpected error occurred: {e}"}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
+
 if __name__ == '__main__':
     # Run the Flask app
     app.logger.info("Iniciando o servidor Flask...")
