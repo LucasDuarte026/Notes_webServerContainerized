@@ -11,3 +11,4 @@ CREATE TABLE notes (
 );
 ALTER TABLE notes OWNER TO lucas;
 
+INSERT INTO notes (tag, name, email, text) VALUES ('1234', 'lucas', 'lucas@usp.br', 'texto exemplo');

@@ -53,7 +53,7 @@ def create_note():
         data = request.get_json()
         if not data or not all(key in data for key in ['tag', 'name', 'email', 'text']):
             return jsonify({'error': 'Missing required data (tag, name, email, text)'}), 400
-
+        print("Received data:", data)  # Debugging line to check received data
         tag = data['tag']
         name = data['name']
         email = data['email']
@@ -80,48 +80,21 @@ def create_note():
 
 def config_database():
    
-    conn = None
+    conn = get_db_connection()
     cur = None
     try:
-        conn = sql.connect(
-            dbname="postgres", 
-            user="postgres",  
-            password="",
-            host="localhost",
-        )
-        conn.autocommit = True  
-
         cur = conn.cursor()
 
-        cur.execute("CREATE DATABASE pn_database;")
+        cur.execute("SELECT * FROM notes;")
 
-        cur.execute("CREATE USER lucas WITH PASSWORD '1234';")
+        all_notes = cur.fetchall()
 
-        cur.execute("ALTER DATABASE pn_database OWNER TO lucas;")
-
-        conn.close()  
-        conn = sql.connect( 
-            dbname="pn_database",
-            user="lucas",  
-            password="1234",
-            host="localhost",
-        )
-        cur = conn.cursor()
-
-     
-        cur.execute("""
-            CREATE TABLE notes (
-                tag NUMERIC(4) PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                email VARCHAR(255) UNIQUE NOT NULL,
-                text TEXT NOT NULL
-            );
-        """)
-
-        cur.execute("ALTER TABLE notes OWNER TO lucas;")
-
+        if all_notes:
+            for note in all_notes:
+                print(note)
+        else:
+            print("Tabela 'notes' não existe.")
         conn.commit()
-        print("Banco de dados, usuário e tabela criados com sucesso.")
 
     except sql.Error as e:
         print(f"Erro ao configurar o banco de dados: {e}")
@@ -129,7 +102,7 @@ def config_database():
             conn.rollback()  # Rollback em caso de erro
 
     finally:
-        # Fecha o cursor e a conexão
+        # Fecha o cur e a conexão
         if cur:
             cur.close()
         if conn:
@@ -137,5 +110,5 @@ def config_database():
 if __name__ == '__main__':
     # Run the Flask app
     print("Iniciando o servidor Flask...")
-    config_database()
+    config_database()  # Configura o banco de dados
     app.run(host='0.0.0.0', port=5000, debug=True)
