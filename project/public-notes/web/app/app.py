@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 app = Flask(__name__)
 
-app.config['POSTGRES_HOST'] = 'db'
+app.config['POSTGRES_HOST'] = 'localhost'
 app.config['POSTGRES_PORT'] = '5432'
 app.config['POSTGRES_DB'] = 'pn_database'
 app.config['POSTGRES_USER'] = 'lucas'
@@ -39,12 +39,10 @@ def get_current_tag():
     """
     connect to the database and get the current tag value.
     """
-    current_tag=None
+    current_tag = -1
     conn, cur = None,None
     conn = get_db_connection()
-    if not conn:
-        app.logger.error("Could not get database connection for configuration.")
-        return
+ 
 
     # Check if table exists before trying to select from it
     cur = conn.cursor()
@@ -58,14 +56,14 @@ def get_current_tag():
 
             highest_tag = cur.fetchone()
 
-            if highest_tag:
-                current_tag = int(highest_tag[0])
-                app.logger.info(f"highest_tag: {current_tag}")
-            else:
-                app.logger.info("problem with tag value.")
+        if highest_tag and highest_tag[0] is not None:
+            current_highest_tag = int(highest_tag[0])
+            app.logger.info(f"Initialized current highest tag to: {current_highest_tag}")
         else:
-            app.logger.warning("Table 'notes' does not exist. Please create it manually if needed.")
-    
+            # This branch should theoretically be covered by COALESCE, but acts as a fallback
+            current_highest_tag = 0 # If no notes, start from 0 or 1
+            app.logger.info(f"No existing notes found. Initializing current highest tag to: {current_highest_tag}")
+ 
 
         conn.commit() # Commit any potential changes (like table creation)
 
@@ -85,10 +83,12 @@ def get_current_tag():
 def main_page():
     """Renders the main page for creating notes."""
     return render_template('create_page.html')
+
 @app.route('/search')
 def search_page():
     """Renders the main page for searching notes."""
     return render_template('search_page.html')
+
 @app.route('/notesperuser')
 def user_page():
     """Renders the main page for displaying notes per user."""
@@ -161,10 +161,7 @@ def create_note():
 
     # --- Database Insertion ---
     conn = get_db_connection()
-    if not conn:
-        app.logger.error("Failed to get database connection for note creation.")
-        return jsonify({'error': 'Failed to connect to the database.'}), 500
-
+ 
     cursor = None
 
 
@@ -196,6 +193,66 @@ def create_note():
         if conn:
             conn.close()
 
+@app.route('/remove_notes_by_tag', methods=['DELETE'])
+def remove_note_tag():
+    """
+    Removes notes by a tag.
+    """
+    app.logger.info("Received request to delete a note.")
+    data = request.get_json()
+
+    # Log raw received data for debugging
+    app.logger.info(f"Retrieved tag_from_request: {data} (Type: {type(data)})")
+
+    # --- Data Validation ---
+    if not data:
+        app.logger.warning("No JSON data received.")
+        return jsonify({'error': 'No data provided.'}), 400
+
+    remove_tag = data.get('tag')    
+    try:
+        test_nummeric = int(remove_tag)  # Attempt to convert to integer
+    except ValueError:
+        # This block executes if int(data) failed because it wasn't a valid integer string.
+        app.logger.warning(f"Invalid tag format received: '{data}'. Tag must be a whole number.")
+        return jsonify({'error': 'Invalid tag format. Tag must be a whole number.'}), 400
+    except TypeError:
+        # This handles cases where data isn't a string or a number at all (e.g., a list, dict)
+        app.logger.warning(f"Unexpected data type for tag received: '{type(data)}'. Tag must be a number or a string representing a number.")
+        return jsonify({'error': 'Invalid tag type. Tag must be a number or a string representing a number.'}), 400
+
+    # --- Database Insertion ---
+    conn = get_db_connection()
+ 
+    cursor = None
+
+    try:
+        cursor = conn.cursor()
+        query = "DELETE FROM notes WHERE tag = %s;"
+        cursor.execute(query, (remove_tag))
+        conn.commit()
+        app.logger.info("Note successfully deleted in the database.")
+        return jsonify({'message': 'Note successfully deleted!'}), 201
+
+    except ProgrammingError as e:
+        if conn:
+            conn.rollback()
+        app.logger.error(f"Database programming error during note erasing: {e}")
+        app.logger.exception("Full traceback for database programming error:")
+        return jsonify({'error': f"Database error: {e}"}), 500
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        app.logger.error(f"An unexpected error occurred during note erasing: {e}")
+        app.logger.exception("Full traceback for unexpected error:")
+        return jsonify({'error': f"An unexpected error occurred: {e}"}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
 
 @app.route('/get_all_notes', methods=['GET'])
 def get_all_notes():
@@ -205,10 +262,7 @@ def get_all_notes():
     """
     app.logger.info("Received request to fetch all notes.")
     conn = get_db_connection()
-    if not conn:
-        app.logger.error("Failed to get database connection for fetching notes.")
-        return jsonify({'error': 'Failed to connect to the database.'}), 500
-
+ 
     cursor = None
     notes = []
     try:
@@ -238,6 +292,62 @@ def get_all_notes():
         if conn:
             conn.close()
 
+@app.route('/get_notes_per_tag', methods=['POST'])
+def get_notes_per_tag():
+    """
+    Fetches notes from the database matching a given tag.
+    Returns them as a JSON array.
+    """
+    app.logger.info("Received request to fetch notes by tag for search.")
+    data = request.get_json()
+
+    if not data or 'tag' not in data:
+        app.logger.warning("Tag not provided in request body for search.")
+        return jsonify({'error': 'Tag parameter is required.'}), 400
+    tag_to_search = data.get('tag')    
+    try:
+        test_nummeric = int(tag_to_search)  # Attempt to convert to integer
+    except ValueError:
+        # This block executes if int(data) failed because it wasn't a valid integer string.
+        app.logger.warning(f"Invalid tag format received: '{data}'. Tag must be a whole number.")
+        return jsonify({'error': 'Invalid tag format. Tag must be a whole number.'}), 400
+
+    except TypeError:
+        # This handles cases where data isn't a string or a number at all (e.g., a list, dict)
+        app.logger.warning(f"Unexpected data type for tag received: '{type(data)}'. Tag must be a number or a string representing a number.")
+        return jsonify({'error': 'Invalid tag type. Tag must be a number or a string representing a number.'}), 400
+
+    conn = get_db_connection()
+    cursor = None
+    notes = []
+    try:
+        cursor = conn.cursor()
+        
+        query = "SELECT tag, title, name, email, text FROM notes WHERE tag = %s ORDER BY tag ASC LIMIT 80;"
+        cursor.execute(query, (tag_to_search,)) # <--- This is where the query is executed
+
+        column_names = [desc[0] for desc in cursor.description]
+
+        for row in cursor.fetchall():
+            note = dict(zip(column_names, row))
+            notes.append(note)
+
+        app.logger.info(f"Fetched {len(notes)} notes for tag '{tag_to_search}' from the database.")
+        return jsonify(notes), 200
+
+    except ProgrammingError as e:
+        app.logger.error(f"Database programming error during notes fetch for tag '{tag_to_search}': {e}")
+        app.logger.exception("Full traceback for database programming error:")
+        return jsonify({'error': f"Database error: {e}"}), 500
+    except Exception as e:
+        app.logger.error(f"An unexpected error occurred during notes fetch for tag '{tag_to_search}': {e}")
+        app.logger.exception("Full traceback for unexpected error:")
+        return jsonify({'error': f"An unexpected error occurred: {e}"}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 
 if __name__ == '__main__':

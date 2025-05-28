@@ -185,7 +185,9 @@
 
     <button class="action-button" onclick="openModal('new_post')">Add a note</button>
     <button class="action-button" onclick="openModal('remove_post')">Remove a note</button>
-    <button class="action-button" onclick="fetchAndRenderNotes()">Update Notes</button> <div id="new_post" class="modal">
+    <button class="action-button" onclick="fetchAndRenderNotes()">Update Notes</button> 
+    
+    <div id="new_post" class="modal">
         <h2>Add a new post</h2>
         <label for="name">User name:</label>
         <input type="text" id="name" name="name">
@@ -207,11 +209,11 @@
 
     <div id="remove_post" class="modal">
         <h2>Remove a post</h2>
-        <label for="remove_title">Title to remove:</label>
-        <input type="text" id="remove_title" name="remove_title">
+        <label for="remove_tag_input">Tag to remove:</label>
+        <input type="text" id="remove_tag_input" name="remove_tag_input">
 
         <div class="modal-buttons">
-            <button onclick="remove_data()" class="action-button">Confirm</button>
+            <button onclick="remove_data_by_tag()" class="action-button">Confirm</button>
             <button onclick="closeModal('remove_post')" class="action-button" style="background-color: #f44336;">Cancel</button>
         </div>
     </div>
@@ -233,7 +235,7 @@
                 document.getElementById('title').value = '';
                 document.getElementById('body_text').value = '';
             } else if (modalId === 'remove_post') {
-                document.getElementById('remove_title').value = '';
+                document.getElementById('remove_tag_input').value = '';
             }
         }
 
@@ -268,7 +270,7 @@
                 const assignedTag = data.tag ? ` (Tag: ${data.tag})` : '';
                 alert(`Note created successfully!${assignedTag}`);
                 closeModal('new_post');
-                fetchAndRenderNotes(); // Refresh notes display after creation
+                fetchAndRenderNotes(); // Refresh notes disp3lay after creation
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -276,13 +278,37 @@
             });
         }
 
-        function remove_data() {
-            const title = document.getElementById('remove_title').value;
+        function remove_data_by_tag() {
+            const tag = document.getElementById('remove_tag_input').value.trim();
 
-            console.log("Removing post with title:", title);
-            // TODO: Add fetch request to a /remove_note endpoint here
-            alert("Remove functionality not yet implemented.");
-            closeModal('remove_post');
+            if (!tag) {
+                alert("Please enter a tag to remove notes by.");
+                return;
+            }
+
+            fetch('/remove_notes_by_tag', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ tag: tag })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Unknown error'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Remove by Tag Success:', data);
+                // alert(data.message || 'Notes removed successfully for tag!');
+                closeModal('remove_post');
+                fetchAndRenderNotes(); // Refresh notes display after removal
+            })
+            .catch(error => {
+                console.error('Error removing notes by tag:', error);
+                alert('Error removing notes by tag: ' + error.message);
+            });
         }
 
         function fetchAndRenderNotes() {
