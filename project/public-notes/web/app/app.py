@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 app = Flask(__name__)
 
-app.config['POSTGRES_HOST'] = 'localhost'
+app.config['POSTGRES_HOST'] = 'db'
 app.config['POSTGRES_PORT'] = '5432'
 app.config['POSTGRES_DB'] = 'pn_database'
 app.config['POSTGRES_USER'] = 'lucas'
@@ -57,13 +57,12 @@ def get_current_tag():
             highest_tag = cur.fetchone()
 
         if highest_tag and highest_tag[0] is not None:
-            current_highest_tag = int(highest_tag[0])
-            app.logger.info(f"Initialized current highest tag to: {current_highest_tag}")
+            current_tag = int(highest_tag[0])
+            app.logger.info(f"Initialized current highest tag to: {current_tag}")
         else:
             # This branch should theoretically be covered by COALESCE, but acts as a fallback
-            current_highest_tag = 0 # If no notes, start from 0 or 1
-            app.logger.info(f"No existing notes found. Initializing current highest tag to: {current_highest_tag}")
- 
+            current_tag = -1 # If no notes, start from 0 or 1
+            app.logger.info(f"No existing notes found. Initializing current highest tag to: {current_tag}")
 
         conn.commit() # Commit any potential changes (like table creation)
 
@@ -166,6 +165,8 @@ def create_note():
 
 
     tag = get_current_tag()
+    app.logger.info(f"tag debug: {tag}")
+
     tag+=1
     try:
         cursor = conn.cursor()
@@ -350,6 +351,55 @@ def get_notes_per_tag():
             conn.close()
 
 
+
+@app.route('/get_notes_per_email', methods=['POST'])
+def get_notes_per_email():
+    """
+    Fetches notes from the database matching a given email.
+    Returns them as a JSON array.
+    """
+    app.logger.info("Received request to fetch notes by email for search.")
+    data = request.get_json()
+
+    if not data or 'email' not in data:
+        app.logger.warning("email not provided in request body for search.")
+        return jsonify({'error': 'email parameter is required.'}), 400
+    email_to_search = data.get('email')    
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email_to_search):
+        app.logger.warning(f"Invalid email format: {email_to_search}")
+        return jsonify({'error': 'Invalid email format.'}), 400
+
+    conn = get_db_connection()
+    cursor = None
+    notes = []
+    try:
+        cursor = conn.cursor()
+        
+        query = "SELECT email, title, name, email, text FROM notes WHERE email = %s ORDER BY email ASC LIMIT 80;"
+        cursor.execute(query, (email_to_search,)) # <--- This is where the query is executed
+
+        column_names = [desc[0] for desc in cursor.description]
+
+        for row in cursor.fetchall():
+            note = dict(zip(column_names, row))
+            notes.append(note)
+    
+        app.logger.info(f"Fetched {len(notes)} notes for email '{email_to_search}' from the database.")
+        return jsonify(notes), 200
+
+    except ProgrammingError as e:
+        app.logger.error(f"Database programming error during notes fetch for email '{email_to_search}': {e}")
+        app.logger.exception("Full traceback for database programming error:")
+        return jsonify({'error': f"Database error: {e}"}), 500
+    except Exception as e:
+        app.logger.error(f"An unexpected error occurred during notes fetch for email '{email_to_search}': {e}")
+        app.logger.exception("Full traceback for unexpected error:")
+        return jsonify({'error': f"An unexpected error occurred: {e}"}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 if __name__ == '__main__':
     # Run the Flask app
     app.logger.info("Iniciando o servidor Flask...")

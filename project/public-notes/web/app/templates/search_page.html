@@ -155,7 +155,7 @@
 <body>
     <div class="nav-container">
         <a href="/" class="nav-button">Home</a>
-        <a href="/search" class="nav-button active">Search</a>
+        <a href="/search" class="nav-button active">Search per tag</a>
         <a href="/notesperuser" class="nav-button">Notes per User</a>
     </div>
 
@@ -220,7 +220,7 @@
             })
             .catch(error => {
                 console.error('Error fetching notes:', error);
-                alert('Error searchiong notes by tag: ' + error.message);
+                alert('Error searching notes by tag: ' + error.message);
                 notesContainer.innerHTML = `<p style="color: red;">Error loading notes: ${error.message}</p>`;
             });
         }
