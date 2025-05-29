@@ -1,25 +1,11 @@
 services:
-  web:
-    container_name: web_pn
-    build: 
-      context: ./web 
-      dockerfile: Dockerfile
-    ports:
-      - "5000:5000"
-    networks:
-      - pn-net
-    depends_on:
-      db:
-        condition: service_healthy
-    command: ["./wait-for-it.sh", "db:5432", "--", "python3", "app.py"]
-
   db:
     container_name: db_pn
     build: 
       context: ./db
       dockerfile: Dockerfile
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
     environment:
       - POSTGRES_USER=lucas
       - POSTGRES_PASSWORD=1234
@@ -32,7 +18,48 @@ services:
       timeout: 5s 
       retries: 5 
       start_period: 10s 
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    
+  web:
+    container_name: web_pn
+    build: 
+      context: ./web 
+      dockerfile: Dockerfile
+    # ports:
+    #   - "5000:5000"
+    networks:
+      - pn-net
+      - lb-net
 
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["./wait-for-it.sh", "db:5432", "--", "python3", "app.py"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"] # Exemplo de endpoint de health check na app web
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s # Tempo para a aplicação iniciar e estar pronta para responder
+
+  haproxy:
+    build: ./loadbalancer # Build the HAProxy image from the ./haproxy directory
+    container_name: haproxy_lb_pn
+    ports:
+      - "80:80"       # Expose HAProxy's port 80 to the host's port 80
+    depends_on:
+       web:           # HAProxy depends on the Flask app service
+        condition: service_healthy # Ensure HAProxy starts only when the web service is healthycon
+    networks:
+      - lb-net
 networks:
   pn-net:
     driver: bridge
+    internal: true # Only for internal communication between db and web
+  lb-net:
+    driver: bridge
+volumes:
+  db_data:
+
+  

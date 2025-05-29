@@ -93,6 +93,15 @@ def user_page():
     """Renders the main page for displaying notes per user."""
     return render_template('user_page.html')
 
+@app.route('/health')
+def health_check():
+    try:
+        # Tente conectar ao DB para um health check mais robusto
+        conn = get_db_connection()
+        conn.close()
+        return jsonify(status="ok", db_connection="successful"), 200
+    except Exception as e:
+        return jsonify(status="error", db_connection="failed", message=str(e)), 500
 
 @app.route('/create_note', methods=['POST'])
 def create_note():

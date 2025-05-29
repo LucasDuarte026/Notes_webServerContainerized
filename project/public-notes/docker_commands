@@ -41,6 +41,10 @@ DataBase
 WEBpage 
 	docker run -d -p 5000:5000 --name web_pn_container web_pn:latest 
 
+loadbalancer 
+	docker build ./loadbalancer -t load_pn && \
+	docker run -d -p 5000:5000 --name web_pn_container web_pn:latest 
+
 run the server 
 	postgres -D /var/lib/pgsql/data
 
