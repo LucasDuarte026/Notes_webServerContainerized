@@ -1,0 +1,13 @@
+# db.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: db # This will be the hostname other services use (e.g., db:5432)
+spec:
+  selector:
+    app: db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP # Only accessible within the clustera

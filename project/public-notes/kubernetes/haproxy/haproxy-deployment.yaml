@@ -1,0 +1,31 @@
+# haproxy-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haproxy-deployment
+  labels:
+    app: haproxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: haproxy
+  template:
+    metadata:
+      labels:
+        app: haproxy
+    spec:
+      containers:
+      - name: haproxy
+        image: pn-haproxy:1.0 # Use your custom built image
+        ports:
+        - containerPort: 80 # HAProxy listening port
+        - containerPort: 8080 # For HAProxy stats
+        volumeMounts:
+        - name: haproxy-config-volume
+          mountPath: /usr/local/etc/haproxy/haproxy.cfg
+          subPath: haproxy.cfg # Mount only the specific file from the ConfigMap
+      volumes:
+      - name: haproxy-config-volume
+        configMap:
+          name: haproxy-config # Link to the ConfigMap you created

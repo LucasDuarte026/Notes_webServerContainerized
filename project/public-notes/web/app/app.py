@@ -15,7 +15,7 @@ app.config['POSTGRES_DB'] = 'pn_database'
 app.config['POSTGRES_USER'] = 'lucas'
 app.config['POSTGRES_PASSWORD'] = '1234'
 
-def get_db_connection():
+def get_db_connection(check_health=False):
     """Establishes and returns a database connection."""
     conn = None
     try:    
@@ -28,7 +28,8 @@ def get_db_connection():
             client_encoding="UTF8" 
 
         )
-        app.logger.info("Successfully connected to the database!")
+        if check_health:
+            app.logger.info("Successfully connected to the database!")
     except OperationalError as e:
         app.logger.error(f"Error connecting to the database: {e}")
         # Log the full traceback for debugging in development
@@ -97,7 +98,7 @@ def user_page():
 def health_check():
     try:
         # Tente conectar ao DB para um health check mais robusto
-        conn = get_db_connection()
+        conn = get_db_connection(True)
         conn.close()
         return jsonify(status="ok", db_connection="successful"), 200
     except Exception as e:
@@ -384,7 +385,7 @@ def get_notes_per_email():
     try:
         cursor = conn.cursor()
         
-        query = "SELECT email, title, name, email, text FROM notes WHERE email = %s ORDER BY email ASC LIMIT 80;"
+        query = "SELECT tag, email, title, name, email, text FROM notes WHERE email = %s ORDER BY email ASC LIMIT 80;"
         cursor.execute(query, (email_to_search,)) # <--- This is where the query is executed
 
         column_names = [desc[0] for desc in cursor.description]

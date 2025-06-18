@@ -1,0 +1,60 @@
+# db-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployment
+  labels:
+    app: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+      - name: db
+        image: pn-db:1.0 # Use your custom built image
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-credentials
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-credentials
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: postgres-credentials
+              key: POSTGRES_DB
+        volumeMounts:
+        - name: db-storage
+          mountPath: /var/lib/postgresql/data
+        # Health checks (pg_isready)
+        readinessProbe:
+          exec:
+            command: ["pg_isready", "-U", "lucas", "-d", "pn_database"]
+          initialDelaySeconds: 10 # start_period in Docker Compose
+          periodSeconds: 5 # interval
+          timeoutSeconds: 5 # timeout
+          failureThreshold: 5 # retries
+        livenessProbe:
+          exec:
+            command: ["pg_isready", "-U", "lucas", "-d", "pn_database"]
+          initialDelaySeconds: 30 # Give it more time before checking liveness
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+      volumes:
+      - name: db-storage
+        persistentVolumeClaim:
+          claimName: db-data-pvc

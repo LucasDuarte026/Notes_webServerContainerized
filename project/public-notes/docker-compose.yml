@@ -17,7 +17,7 @@ services:
       interval: 5s 
       timeout: 5s 
       retries: 5 
-      start_period: 10s 
+      start_period: 0s 
     volumes:
       - db_data:/var/lib/postgresql/data
     
@@ -25,11 +25,11 @@ services:
     container_name: web_pn
     build: 
       context: ./web 
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile  
     # ports:
-    #   - "5000:5000"
-    networks:
-      - pn-net
+    #   - "5000:5000"             # not anymore exposiing Flask app on port 5000
+    networks:     
+      - pn-net      
       - lb-net
 
     depends_on:
@@ -37,11 +37,11 @@ services:
         condition: service_healthy
     command: ["./wait-for-it.sh", "db:5432", "--", "python3", "app.py"]
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"] # Exemplo de endpoint de health check na app web
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 20s # Tempo para a aplicação iniciar e estar pronta para responder
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"] # Check if the Flask app is healthy
+      interval: 20s # Interval between health checks
+      timeout: 5s # Timeout for the health check
+      retries: 3  # Health check for the Flask app
+      start_period: 5s # Wait for the app to start
 
   haproxy:
     build: ./loadbalancer # Build the HAProxy image from the ./haproxy directory

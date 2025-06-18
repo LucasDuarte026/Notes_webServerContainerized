@@ -7,6 +7,8 @@ append_hba() {
     grep -qF "$1" "$DATA_DIR/pg_hba.conf" || echo "$1" >> "$DATA_DIR/pg_hba.conf"
 }
 
+chown -R postgres:postgres "$DATA_DIR"
+chmod 0700 "$DATA_DIR"
 
 # Check if the database cluster is initialized
 if [ ! -f /var/lib/pgsql/data/PG_VERSION ]; then
@@ -23,12 +25,12 @@ if [ ! -f /var/lib/pgsql/data/PG_VERSION ]; then
 
     echo "Stopping temporary server..."
     /usr/lib/postgresql/bin/pg_ctl -D /var/lib/pgsql/data -m fast stop
+    # Add rules for the 'lucas' user to access 'pn_database' securely
+    append_hba "host    pn_database   lucas           0.0.0.0/0               scram-sha-256"
+# append_hba "local   pn_database   lucas                                   scram-sha-256"
 else
     echo "Database cluster already initialized."
 fi
-# Add rules for the 'lucas' user to access 'pn_database' securely
-append_hba "host    pn_database   lucas           0.0.0.0/0               scram-sha-256"
-# append_hba "local   pn_database   lucas                                   scram-sha-256"
 
 echo "Starting PostgreSQL server..."
 exec /usr/lib/postgresql/bin/postgres -D /var/lib/pgsql/data -c listen_addresses='*'

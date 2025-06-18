@@ -1,0 +1,13 @@
+# web-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: web # This is what HAProxy will connect to
+spec:
+  selector:
+    app: web
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP # Only accessible within the cluster (HAProxy will access it)

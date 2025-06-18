@@ -1,0 +1,49 @@
+
+
+# haproxy-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: haproxy-config
+data:
+  # The content of your haproxy.cfg file goes here.
+  # Adjust `web-service` and `5000` to match your web-service.yaml.
+  # You can either copy-paste the content directly or load it from a file:
+  # For example, if your haproxy.cfg is in ./loadbalancer/haproxy.cfg:
+  # kubectl create configmap haproxy-config --from-file=./loadbalancer/haproxy.cfg
+  haproxy.cfg: |
+    global
+        log /dev/log    local0
+        chroot /var/lib/haproxy
+        stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+        stats timeout 30s
+        user haproxy
+        group haproxy
+        daemon
+
+    defaults
+        log     global
+        mode    http
+        option  httplog
+        option  dontlognull
+        timeout connect 5000ms
+        timeout client 50000ms
+        timeout server 50000ms
+
+    listen stats
+        bind *:8080
+        mode http
+        stats enable
+        stats uri /haproxy_stats
+        stats realm HAProxy\ Statistics
+        stats auth admin:password # Change this for production!
+
+    frontend http_front
+        bind *:80
+        default_backend http_back
+
+    backend http_back
+        balance roundrobin
+        # Use the Kubernetes Service name for your web application
+        # Kubernetes will handle load balancing to the web-deployment Pods
+        server web-app web-service:5000 check

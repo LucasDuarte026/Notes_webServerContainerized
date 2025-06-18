@@ -13,10 +13,13 @@ CREATE TABLE notes (
 ALTER TABLE notes OWNER TO lucas;
 
 INSERT INTO notes (tag, title, name, email, text) VALUES ('0','exemplo de título', 'lucas', 'lucas@usp.br', 'texto exemplo');
-INSERT INTO notes (tag, title, name, email, text) VALUES ('1','exemplo de título', 'lucas', 'lducas@usp.br', 'texto exemplo');
-INSERT INTO notes (tag, title, name, email, text) VALUES ('2','exemplo de título', 'lucas', 'lucdas@usp.br', 'texto exemplo');
-INSERT INTO notes (tag, title, name, email, text) VALUES ('3','exemplo de título', 'lucas', 'lucfas@usp.br', 'texto exemplo');
-INSERT INTO notes (tag, title, name, email, text) VALUES ('4','exemplo de título', 'lucas', 'lucass@usp.br', 'texto exemplo');
-INSERT INTO notes (tag, title, name, email, text) VALUES ('5','exemplo de título', 'lucas', 'lucfas@usp.br', 'texto exemplo');
-INSERT INTO notes (tag, title, name, email, text) VALUES ('6','exemplo de título', 'lucas', 'lucvas@usp.br', 'texto exemplo');
-INSERT INTO notes (tag, title, name, email, text) VALUES ('7','exemplo de título', 'lucas', 'lucbas@usp.br', 'texto exemplo');
+INSERT INTO notes (tag, title, name, email, text) VALUES ('1','Meeting Notes', 'Maria', 'maria@company.com', 'Discussed project timeline');
+INSERT INTO notes (tag, title, name, email, text) VALUES ('2','Shopping List', 'João', 'joao@gmail.com', 'Milk, eggs, bread');
+INSERT INTO notes (tag, title, name, email, text) VALUES ('3','Ideas Blog', 'Ana', 'ana@blog.org', 'Content ideas for next month');
+INSERT INTO notes (tag, title, name, email, text) VALUES ('4','Work Tasks', 'Carlos', 'carlos@work.net', 'Finish report by Friday');
+INSERT INTO notes (tag, title, name, email, text) VALUES ('5','Travel Plans', 'Julia', 'julia@travel.com', 'Book flight to Paris');
+INSERT INTO notes (tag, title, name, email, text) VALUES ('6','Study Notes', 'Pedro', 'pedro@university.edu', 'Math formulas to remember');
+INSERT INTO notes (tag, title, name, email, text) VALUES ('7','Recipe', 'Fernanda', 'fernanda@food.net', 'Grandms cake recipe');
+INSERT INTO notes (tag, title, name, email, text) VALUES ('8','Book Recommendations', 'Ricardo', 'ricardo@books.com', 'New sci-fi releases');
+INSERT INTO notes (tag, title, name, email, text) VALUES ('9','Project Ideas', 'Camila', 'camila@dev.io', 'Mobile app for task management');
+

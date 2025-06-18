@@ -1,0 +1,40 @@
+# web-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+  labels:
+    app: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        image: pn-web:1.0 
+        command: ["python3", "app.py"]  
+        ports:
+        - containerPort: 5000
+        # Health checks (curl -f http://localhost:5000/health)
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5 # start_period
+          periodSeconds: 20 # interval
+          timeoutSeconds: 5 # timeout
+          failureThreshold: 3 # retries
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 30 
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
