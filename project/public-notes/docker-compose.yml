@@ -19,8 +19,8 @@ services:
       retries: 5 
       start_period: 0s 
     volumes:
-      - db_data:/var/lib/postgresql/data
-    
+      - db_data:/var/lib/pgsql/data
+
   web:
     container_name: web_pn
     build: 
