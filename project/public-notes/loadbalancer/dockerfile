@@ -11,7 +11,5 @@ COPY haproxy.cfg /etc/haproxy/haproxy.cfg
 # Expose the default HTTP port (80)
 EXPOSE 80
 
-# Command to run HAProxy when the container starts
-# -f specifies the config file
-# -db disables background processing (useful for Docker logs)
+# Run HAProxy in the foreground
 CMD ["haproxy", "-f", "/etc/haproxy/haproxy.cfg", "-db"]

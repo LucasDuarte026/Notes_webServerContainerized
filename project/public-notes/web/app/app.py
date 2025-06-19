@@ -11,12 +11,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 app = Flask(__name__)
 
-# app.config['POSTGRES_HOST'] = 'db'
-# app.config['POSTGRES_PORT'] = '5432'
-# app.config['POSTGRES_DB'] = 'pn_database'
-# app.config['POSTGRES_USER'] = 'lucas'
-# app.config['POSTGRES_PASSWORD'] = '1234'
-
 app.config['POSTGRES_HOST'] = os.getenv('POSTGRES_HOST') 
 app.config['POSTGRES_PORT'] = os.getenv('POSTGRES_PORT')
 app.config['POSTGRES_DB'] = os.getenv('POSTGRES_DB')

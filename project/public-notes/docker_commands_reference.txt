@@ -48,3 +48,20 @@ loadbalancer
 run the server 
 	postgres -D /var/lib/pgsql/data
 
+up down and volumes in  the docker compose
+	docker compose up
+	docker compose down
+	docker compose down -v
+	docker compose down --build
+
+- -- -- --- --- -- -- -- -- --- --- -- -- -- -- --- Kubernetes --- -- -- -- -- --- --- -- -- -- -- --- --- -- -
+
+See the pods
+	kubectl get pods -w 
+Reset pods
+	kubectl delete all --all 
+Launch the Kubernetes
+	minikube start
+	bash ./Kubernetes/launch_config.sh
+
+	minikube service haproxy 			# to launch the web endpoint s 

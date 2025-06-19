@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: db # This will be the hostname other services use (e.g., db:5432)
+  name: db  
 spec:
   selector:
     app: db

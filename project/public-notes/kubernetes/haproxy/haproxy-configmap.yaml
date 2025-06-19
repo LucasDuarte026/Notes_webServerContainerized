@@ -6,11 +6,8 @@ kind: ConfigMap
 metadata:
   name: haproxy-config
 data:
-  # The content of your haproxy.cfg file goes here.
-  # Adjust `web-service` and `5000` to match your web-service.yaml.
-  # You can either copy-paste the content directly or load it from a file:
-  # For example, if your haproxy.cfg is in ./loadbalancer/haproxy.cfg:
-  # kubectl create configmap haproxy-config --from-file=./loadbalancer/haproxy.cfg
+  #  haproxy-config adjusted to work with a web application in Kubernetes
+  #  this solves for the "web" application that is running in the cluster
   haproxy.cfg: |
     global
         log /dev/log    local0

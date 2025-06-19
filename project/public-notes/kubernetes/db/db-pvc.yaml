@@ -10,4 +10,4 @@ spec:
     - ReadWriteOnce 
   resources:
     requests:
-      storage: 1Gi # Request 1 Gigabyte of storage that for this nodes application  must be enough
+      storage: 1Gi # Request 1 Gigabyte of storage that for this nodes application  must be enough  
