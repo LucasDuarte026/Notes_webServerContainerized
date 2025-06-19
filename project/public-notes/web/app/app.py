@@ -247,7 +247,7 @@ def remove_note_tag():
     try:
         cursor = conn.cursor()
         query = "DELETE FROM notes WHERE tag = %s;"
-        cursor.execute(query, (remove_tag))
+        cursor.execute(query, [remove_tag])
         conn.commit()
         app.logger.info("Note successfully deleted in the database.")
         return jsonify({'message': 'Note successfully deleted!'}), 201
