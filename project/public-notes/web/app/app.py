@@ -3,19 +3,29 @@ import psycopg2 as sql
 from psycopg2 import OperationalError, ProgrammingError
 import logging # Import logging module
 import re # Import regex for email validation
+import os # Import os for environment variables
+
 
 # Configure logging for the application
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 app = Flask(__name__)
 
-app.config['POSTGRES_HOST'] = 'db'
-app.config['POSTGRES_PORT'] = '5432'
-app.config['POSTGRES_DB'] = 'pn_database'
-app.config['POSTGRES_USER'] = 'lucas'
-app.config['POSTGRES_PASSWORD'] = '1234'
+# app.config['POSTGRES_HOST'] = 'db'
+# app.config['POSTGRES_PORT'] = '5432'
+# app.config['POSTGRES_DB'] = 'pn_database'
+# app.config['POSTGRES_USER'] = 'lucas'
+# app.config['POSTGRES_PASSWORD'] = '1234'
+
+app.config['POSTGRES_HOST'] = os.getenv('POSTGRES_HOST') 
+app.config['POSTGRES_PORT'] = os.getenv('POSTGRES_PORT')
+app.config['POSTGRES_DB'] = os.getenv('POSTGRES_DB')
+app.config['POSTGRES_USER'] = os.getenv('POSTGRES_USER')
+app.config['POSTGRES_PASSWORD'] = os.getenv('POSTGRES_PASSWORD')
+
 
 def get_db_connection(check_health=False):
+    print(f"Database configuration: {app.config['POSTGRES_HOST']}:{app.config['POSTGRES_PORT']}/{app.config['POSTGRES_DB']} as {app.config['POSTGRES_USER']}")
     """Establishes and returns a database connection."""
     conn = None
     try:    
@@ -46,6 +56,9 @@ def get_current_tag():
  
 
     # Check if table exists before trying to select from it
+    if not conn:
+        app.logger.error("Failed to connect to the database. Cannot check for table existence.")
+        return current_tag
     cur = conn.cursor()
     cur.execute("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename  = 'notes');")
     table_exists = cur.fetchone()[0]

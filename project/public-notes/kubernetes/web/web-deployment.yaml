@@ -21,20 +21,40 @@ spec:
         command: ["python3", "app.py"]  
         ports:
         - containerPort: 5000
+        env:
+        - name: POSTGRES_HOST
+          value: "db" 
+        - name: POSTGRES_PORT
+          value: "5432"       # Default PostgreSQL port
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: postgres-credentials
+              key: POSTGRES_DB
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-credentials
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-credentials
+              key: POSTGRES_PASSWORD
         # Health checks (curl -f http://localhost:5000/health)
         readinessProbe:
           httpGet:
             path: /health
             port: 5000
           initialDelaySeconds: 5 # start_period
-          periodSeconds: 20 # interval
-          timeoutSeconds: 5 # timeout
-          failureThreshold: 3 # retries
+          periodSeconds: 3 # interval
+          timeoutSeconds: 7 # timeout
+          failureThreshold: 10 # retries
         livenessProbe:
           httpGet:
             path: /health
             port: 5000
-          initialDelaySeconds: 30 
-          periodSeconds: 30
+          initialDelaySeconds: 5
+          periodSeconds: 10
           timeoutSeconds: 5
-          failureThreshold: 3
+          failureThreshold: 10

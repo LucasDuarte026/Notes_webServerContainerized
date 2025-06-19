@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: db
-        image: pn-db:1.0 # Use your custom built image
+        image: pn-db:1.0 
         ports:
         - containerPort: 5432
         env:
@@ -38,22 +38,22 @@ spec:
               key: POSTGRES_DB
         volumeMounts:
         - name: db-storage
-          mountPath: /var/lib/postgresql/data
+          mountPath: /var/lib/psql/data
         # Health checks (pg_isready)
         readinessProbe:
           exec:
-            command: ["pg_isready", "-U", "lucas", "-d", "pn_database"]
-          initialDelaySeconds: 10 # start_period in Docker Compose
-          periodSeconds: 5 # interval
-          timeoutSeconds: 5 # timeout
-          failureThreshold: 5 # retries
+            command: ["pg_isready", "-U", "$(POSTGRES_USER)", "-d", "$(POSTGRES_DB)"]
+          initialDelaySeconds: 3 # start_period in Docker Compose
+          periodSeconds: 3 # interval
+          timeoutSeconds: 7 # timeout
+          failureThreshold: 10 # retries
         livenessProbe:
           exec:
-            command: ["pg_isready", "-U", "lucas", "-d", "pn_database"]
-          initialDelaySeconds: 30 # Give it more time before checking liveness
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
+            command: ["pg_isready", "-U", "$(POSTGRES_USER)", "-d", "$(POSTGRES_DB)"]
+          initialDelaySeconds: 5 # Give it more time before checking liveness
+          periodSeconds: 3
+          timeoutSeconds: 7
+          failureThreshold: 20
       volumes:
       - name: db-storage
         persistentVolumeClaim:

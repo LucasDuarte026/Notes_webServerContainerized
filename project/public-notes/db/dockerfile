@@ -4,7 +4,6 @@ FROM opensuse/leap:15.5
 RUN zypper -n update && zypper -n install -y postgresql postgresql-server postgresql-contrib
 
 # Create the data directory and set permissions
-
 RUN mkdir -p /var/lib/pgsql/data /run/postgresql /docker-entrypoint-initdb.d && \
     chown -R postgres:postgres /var/lib/pgsql /run/postgresql /docker-entrypoint-initdb.d
 
@@ -13,11 +12,15 @@ RUN mkdir -p /var/lib/pgsql/data /run/postgresql /docker-entrypoint-initdb.d && 
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
+# Initialize the database for the first time with some examples
 COPY init.sql /docker-entrypoint-initdb.d/init.sql
 RUN chmod +x /docker-entrypoint-initdb.d/init.sql
 
+# Set back the default user
 USER postgres
 
+# internal port for PostgreSQL
 EXPOSE 5432
 
+# Launch the PostgreSQL server with the entrypoint script
 CMD ["/usr/local/bin/docker-entrypoint.sh"]

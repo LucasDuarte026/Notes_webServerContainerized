@@ -1,12 +1,14 @@
 #!/bin/bash
 set -e
 
-DATA_DIR="/var/lib/pgsql/data"
+DATA_DIR="/var/lib/pgsql/data"  # PostgreSQL data directory
 
-append_hba() {
-    grep -qF "$1" "$DATA_DIR/pg_hba.conf" || echo "$1" >> "$DATA_DIR/pg_hba.conf"
+# append_hba function to add entries to pg_hba.conf
+append_hba() { 
+    grep -qF "$1" "$DATA_DIR/pg_hba.conf" || echo "$1" >> "$DATA_DIR/pg_hba.conf" 
 }
 
+# give ownership and permissions to the data directory
 chown -R postgres:postgres "$DATA_DIR"
 chmod 0700 "$DATA_DIR"
 
@@ -25,9 +27,10 @@ if [ ! -f /var/lib/pgsql/data/PG_VERSION ]; then
 
     echo "Stopping temporary server..."
     /usr/lib/postgresql/bin/pg_ctl -D /var/lib/pgsql/data -m fast stop
+
     # Add rules for the 'lucas' user to access 'pn_database' securely
     append_hba "host    pn_database   lucas           0.0.0.0/0               scram-sha-256"
-# append_hba "local   pn_database   lucas                                   scram-sha-256"
+
 else
     echo "Database cluster already initialized."
 fi

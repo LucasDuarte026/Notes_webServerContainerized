@@ -10,5 +10,5 @@ spec:
     - protocol: TCP
       port: 80 # Port exposed by the service
       targetPort: 80 # Port on the HAProxy container
-      nodePort: 30080 # Optional: Specify a NodePort if you want a fixed port (range 30000-32767)
+      nodePort: 30080 
   type: NodePort # Expose externally via Minikube IP and NodePort

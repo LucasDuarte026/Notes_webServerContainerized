@@ -3,6 +3,8 @@ FROM opensuse/leap:15.5
 # Update repositories and install HAProxy
 RUN zypper refresh && zypper -n install haproxy
 
+RUN mkdir -p /run/haproxy && chown haproxy:haproxy /run/haproxy && chmod 755 /run/haproxy
+
 # Copy the HAProxy configuration file into the container
 COPY haproxy.cfg /etc/haproxy/haproxy.cfg
 

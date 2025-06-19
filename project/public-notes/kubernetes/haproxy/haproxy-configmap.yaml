@@ -46,4 +46,4 @@ data:
         balance roundrobin
         # Use the Kubernetes Service name for your web application
         # Kubernetes will handle load balancing to the web-deployment Pods
-        server web-app web-service:5000 check
+        server web-app web:5000 check

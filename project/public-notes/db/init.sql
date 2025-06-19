@@ -1,7 +1,9 @@
+-- Create the database and user, set permissions, and insert initial data
 CREATE DATABASE pn_database;
 CREATE USER lucas WITH PASSWORD '1234';
 ALTER DATABASE pn_database OWNER TO lucas;
 
+-- Inside the database, create the notes table and insert initial data
 \c pn_database
 CREATE TABLE notes (
     tag NUMERIC(4) PRIMARY KEY,
@@ -12,6 +14,7 @@ CREATE TABLE notes (
 );
 ALTER TABLE notes OWNER TO lucas;
 
+-- Insert initial data into the notes table
 INSERT INTO notes (tag, title, name, email, text) VALUES ('0','exemplo de título', 'lucas', 'lucas@usp.br', 'texto exemplo');
 INSERT INTO notes (tag, title, name, email, text) VALUES ('1','Meeting Notes', 'Maria', 'maria@company.com', 'Discussed project timeline');
 INSERT INTO notes (tag, title, name, email, text) VALUES ('2','Shopping List', 'João', 'joao@gmail.com', 'Milk, eggs, bread');

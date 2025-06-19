@@ -5,21 +5,25 @@ services:
       context: ./db
       dockerfile: Dockerfile
     # ports:
-    #   - "5432:5432"
-    environment:
-      - POSTGRES_USER=lucas
-      - POSTGRES_PASSWORD=1234
-      - POSTGRES_DB=pn_database
+    #   - "5432:5432" 
+    environment: # PICK FROM .ENV FILE
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
     networks:
       - pn-net
     healthcheck: 
-      test: ["CMD-SHELL", "pg_isready -U lucas -d pn_database"] 
+      test: ["CMD-SHELL", "pg_isready -U $(POSTGRES_USER) -d $(POSTGRES_DB)"] 
       interval: 5s 
       timeout: 5s 
       retries: 5 
       start_period: 0s 
     volumes:
       - db_data:/var/lib/pgsql/data
+ 
+    
 
   web:
     container_name: web_pn
@@ -27,7 +31,13 @@ services:
       context: ./web 
       dockerfile: Dockerfile  
     # ports:
-    #   - "5000:5000"             # not anymore exposiing Flask app on port 5000
+    #   - "5000:5000"             # not anymore exposiing Flask app on port 5000]
+    environment: # PICK FROM .ENV FILE
+      - POSTGRES_HOST
+      - POSTGRES_PORT      
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB    
     networks:     
       - pn-net      
       - lb-net

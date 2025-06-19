@@ -21,6 +21,9 @@ spec:
         ports:
         - containerPort: 80 # HAProxy listening port
         - containerPort: 8080 # For HAProxy stats
+        command: ["haproxy"] # Use the haproxy command to start the service
+        args: ["-f", "/usr/local/etc/haproxy/haproxy.cfg", "-db"] # Specify the configuration file and enable debug mode
+    
         volumeMounts:
         - name: haproxy-config-volume
           mountPath: /usr/local/etc/haproxy/haproxy.cfg
