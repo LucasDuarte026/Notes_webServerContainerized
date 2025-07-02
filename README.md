@@ -73,12 +73,23 @@ The following images demonstrate the core functionalities of the Public Notes ap
 **Caption:** The main dashboard provides a consolidated view of all existing notes and serves as the central hub for accessing other features.
 
 ### Creating a New Note
-![New Note Window](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/new_note_window.jpg)
+<div style="max-width: 300px; overflow: hidden; border: 1px solid #ddd; border-radius: 8px;">
+  <img 
+    src="https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/new_note_window.jpg" 
+    alt="New Note Window" 
+    style="width: 100%; transform: scale(1.05);">
+</div>
 
 **Caption:** Users can add new notes to the database through this intuitive modal window, specifying the content, associated tags, and user email.
 
 ### Deleting a Note
-![Deleting a Note](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/remove_window.jpg)
+<div style="max-width: 300px; overflow: hidden; border: 1px solid #ddd; border-radius: 8px;">
+  <img 
+    src="https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/remove_window.jpg" 
+    alt="New Note Window" 
+    style="width: 95%; transform: scale(1.05);">
+</div>
+
 
 **Caption:** The application provides a straightforward mechanism for removing notes from the database.
 
@@ -187,7 +198,7 @@ This deployment method demonstrates how to run the application in a local Kubern
 3.  **Access the Application:**
     To access the application, use the `minikube service` command. This command automatically creates a network tunnel to the `haproxy-service` within the cluster and opens the application's URL in your default web browser.
     ```bash
-    minikube service haproxy-service
+    minikube service haproxy
     ```
 ---
 
