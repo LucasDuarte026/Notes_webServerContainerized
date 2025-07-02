@@ -45,7 +45,16 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: ["./wait-for-it.sh", "db:5432", "--", "python3", "app.py"]
+    command: > # Use 'scalar block' style for multiline commands
+      /bin/sh -c "
+        echo 'Waiting for db:5432 to be available...' ;
+        until (echo > /dev/tcp/db/5432) >/dev/null 2>&1; do
+          echo 'db:5432 is still unavailable. Retrying in 1 second...' ;
+          sleep 1 ;
+        done ;
+        echo 'db:5432 is now available! Starting Flask app...' ;
+        exec python3 app.py
+      " 
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"] # Check if the Flask app is healthy
       interval: 20s # Interval between health checks

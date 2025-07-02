@@ -6,7 +6,6 @@ RUN zypper --non-interactive update && \
 
 WORKDIR /app
 COPY ./app /app
-RUN chmod +x /app/wait-for-it.sh
 
 RUN pip3 install Flask
 
