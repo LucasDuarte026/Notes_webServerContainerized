@@ -31,7 +31,7 @@ while [ "$#" -gt 0 ]; do
     -t)
       TIMEOUT="$2"
       if ! [[ "$TIMEOUT" =~ ^[0-9]+$ ]]; then
-        echo "Erro: O timeout deve ser um número inteiro."
+        echo "Erro: O timeout must be an integer number."
         usage
       fi
       shift 2
@@ -57,7 +57,7 @@ fi
 
 # Mensagem de espera
 if [ "$QUIET" -eq 0 ]; then
-  echo "Aguardando $HOST:$PORT..."
+  echo "waiting $HOST:$PORT..."
 fi
 
 # Loop de tentativa de conexão
@@ -66,7 +66,7 @@ while :; do
   (echo > /dev/tcp/"$HOST"/"$PORT") >/dev/null 2>&1
   if [ $? -eq 0 ]; then
     if [ "$QUIET" -eq 0 ]; then
-      echo "$HOST:$PORT está disponível!"
+      echo "$HOST:$PORT is available!"
     fi
     break
   fi
@@ -75,12 +75,12 @@ while :; do
   ELAPSED_TIME=$((CURRENT_TIME - START_TIME))
 
   if [ "$ELAPSED_TIME" -ge "$TIMEOUT" ]; then
-    echo "Erro: Tempo limite de $TIMEOUT segundos excedido para $HOST:$PORT"
+    echo "Erro: time limit to $TIMEOUT seconds passed over $HOST:$PORT"
     exit 1
   fi
 
   if [ "$QUIET" -eq 0 ]; then
-    echo "Ainda aguardando $HOST:$PORT... ($ELAPSED_TIME/$TIMEOUT s)"
+    echo "Still waiting $HOST:$PORT... ($ELAPSED_TIME/$TIMEOUT s)"
   fi
   sleep 1
 done
@@ -88,7 +88,7 @@ done
 # Executar comando se especificado
 if [ -n "$COMMAND" ]; then
   if [ "$QUIET" -eq 0 ]; then
-    echo "Executando comando: $COMMAND"
+    echo "execute the command: $COMMAND"
   fi
   exec $COMMAND
 fi

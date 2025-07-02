@@ -1,6 +1,6 @@
 services:
   db:
-    container_name: db_pn
+    container_name: db
     build: 
       context: ./db
       dockerfile: Dockerfile
@@ -26,7 +26,7 @@ services:
     
 
   web:
-    container_name: web_pn
+    container_name: web
     build: 
       context: ./web 
       dockerfile: Dockerfile  

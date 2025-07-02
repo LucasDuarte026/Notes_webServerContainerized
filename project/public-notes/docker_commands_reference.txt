@@ -28,13 +28,13 @@ OPENSUSE/LEAP
 	-- later - engine (proxy) 
 	
 
-debuild and relaunch all dockers
-	docker rm -f db_pn_container && \
-	docker rm -f web_pn_container && \
-		docker build ./db -t db_pn && \
-		docker build  ./web -t web_pn && \
-	docker run -d -p 5432:5432 --name db_pn_container db_pn:latest &&  \
-	docker run -d -p 5000:5000 --name web_pn_container web_pn:latest 
+-- debuild and relaunch all dockers
+docker rm -f db_pn_container && \
+docker rm -f web_pn_container && \
+docker build ./db -t db_pn && \
+docker build  ./web -t web_pn && \
+docker run -d -p 5432:5432 --name db_pn_container db_pn:latest &&  \
+docker run -d -p 5000:5000 --name web_pn_container web_pn:latest 
 		
 DataBase
 	docker run -d -p 5432:5432 --name db_pn_container db_pn:latest 
