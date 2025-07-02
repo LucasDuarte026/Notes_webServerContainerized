@@ -1,7 +1,7 @@
 # Ensure you are in your project root
 # cd ~/Documents/cloud_computing_2025/project/public-notes
 
-
+minikube start --driver=docker
 echo "Bringing the environment variables"
 eval $(minikube -p minikube docker-env)
 
