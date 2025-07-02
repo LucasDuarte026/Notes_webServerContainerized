@@ -1,44 +1,143 @@
-# Cloud Computing 2025
--   Hochschule hof
-## Student:
-- 🇧🇷 Lucas Sales Duarte 
+# Public Notes: A Multi-Tier Cloud Application with Docker and Kubernetes
 
+![Language](https://img.shields.io/badge/Language-Python-blue.svg) ![Framework](https://img.shields.io/badge/Framework-Flask-green.svg) ![Database](https://img.shields.io/badge/Database-PostgreSQL-purple.svg) ![Containerization](https://img.shields.io/badge/Containerization-Docker-blue.svg) ![Orchestration](https://img.shields.io/badge/Orchestration-Kubernetes-blue.svg) ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
+## Introduction
 
-sistema operacional referencia
-Ubuntu 20.04
-    git clone https://github.com/LucasDuarte026/cloud_computing
-    sudo apt update -y && sudo apt upgrade -y
+### Project Synopsis
 
-    install docker and docker compose
-    sudo apt install docker -y
+This repository contains the source code and deployment configurations for "Public Notes," a full-stack, containerized web application designed for creating and managing public notes. This project serves as a comprehensive, hands-on demonstration of cloud computing principles, DevOps methodologies, and best practices in application deployment. It showcases the entire lifecycle of a cloud-native application, from local containerized development to scalable orchestration in a production-simulated environment.
 
-    cd ./cloud_computing/project/public-notes
+### Academic Context
+<table>
+  <tr>
+    <td valign="top" width="300">
+      <img src="https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/logo_hof.gif" alt="Logo Hof">
+    </td>
+    <td valign="middle">
+      This project is a key deliverable for the <b>Cloud Computing</b> discipline at the <b>Hochschule für angewandte Wissenschaften Hof</b>. It represents the practical application and synthesis of the core concepts covered throughout the course.
+    </td>
+  </tr>
+</table>
+The implementation of this project leverages a suite of industry-standard tools and technologies to build a robust and scalable system. Each component was selected to demonstrate a specific concept in cloud architecture:
 
+* **Containerization (Docker):** The application and its dependencies are packaged into lightweight, portable containers using Docker. This ensures consistency across different environments and simplifies the deployment process.
+* **Multi-Container Orchestration (Docker Compose):** For local development and testing, Docker Compose is used to define and manage the multi-container application, including its services, networks, and volumes, through a single declarative YAML file.
+* **Cluster Orchestration (Kubernetes):** To simulate a production-grade deployment, the application is deployed to a Kubernetes cluster managed by Minikube. This demonstrates proficiency in scalable container orchestration, service discovery, and lifecycle management.
+* **Load Balancing & Reverse Proxy (HAProxy):** HAProxy serves as the single entry point for all incoming traffic, providing reverse proxy capabilities to secure and decouple the backend services from the public internet.
+* **Application Backend (Python/Flask):** The core application logic is built using Python with the Flask micro-framework, handling web requests, business logic, and communication with the data layer.
+* **Data Persistence (PostgreSQL):** A PostgreSQL database is used for the persistent storage of application data. The use of Docker volumes ensures that data integrity is maintained even if the database container is recreated.
 
-    the architecture chosen was usind a reverse proxy with haproxy to make public the port 80, and hide the inside containers
-    there are 2 networks, one between the proxy and the web, and other from the web with database. this way is the best form 
-    for the project, is used a non volatile database volume, that is always attached to a host storage to, even the containers be destroyed, the data never be lost
+### Project Requirements
 
-1º docker compose:
-    to launch the docker infraestrucure with both haproxy, the web application and the database, build with docker compose and the launch them.
-    
+The development of this application was guided by a formal set of technical objectives designed to showcase a comprehensive understanding of cloud infrastructure design. The primary requirements were as follows:
 
+* **Objective 1: Multi-Tier Architecture:** Design and implement a classic two-tier application architecture, a web application server (logic tier and presentation tier), and a database server (data tier).
+* **Objective 2: Containerization:** Encapsulate each architectural tier (HAProxy, Web Application, PostgreSQL Database) into its own portable and isolated Docker container, enabling modularity.
+* **Objective 3: Secure Networking:** Implement a secure network topology using isolated Docker networks. The design must ensure that the web server and database communicate on a private, backend network that is completely inaccessible from the public-facing load balancer network.
+* **Objective 4: External Accessibility:** Expose the application to the host machine and the public exclusively through the load balancer's standard web port (port 80), hiding the internal services and ports.
+* **Objective 5: Deployment Automation:** Utilize Docker Compose to define, build, and run the entire multi-container infrastructure. This allows for the entire application stack to be launched with a single, reproducible command.
+* **Objective 6: Scalable Deployment Simulation:** Replicate the complete infrastructure within a local Kubernetes cluster (using Minikube). This final step demonstrates the ability to transition the application from a local development setup to a scalable, production-ready orchestration platform.
 
-docker compose build
-docker compose up
+---
 
-then it will be deployed in the port: localhost:80
+## Architectural Design
 
-2º Kubernetes
+### System Overview: A 3-Tier Model
 
-first install minikube and kubectl  
+The application is structured according to the time-tested three-tier architectural model, which separates concerns into logical and physical layers. This separation enhances maintainability, scalability, and security.
 
-https://minikube.sigs.k8s.io/
-https://kubernetes.io/
+* **Presentation Tier (HAProxy):** This is the outermost layer and the sole entry point for all user traffic. It is implemented using an HAProxy container. Its primary responsibility is to act as a reverse proxy, receiving incoming HTTP requests and forwarding them to the application tier. This layer insulates the internal system from direct external exposure.
+* **Logic/Application Tier (Python/Flask):** This middle tier contains the core business logic of the application. The Python Flask server processes requests forwarded by the presentation tier, executes application logic (e.g., creating, deleting, or searching for notes), and interacts with the data tier to persist and retrieve information.
+* **Data Tier (PostgreSQL):** The innermost tier is responsible for all aspects of data storage and management. It consists of a PostgreSQL database running in its own container. This tier is completely isolated and only accepts connections from the trusted application tier, ensuring the security and integrity of the application's data.
+
+### The Secure Networking Strategy
+
+A cornerstone of this project's architecture is its secure networking topology, which is implemented using a dual-network design within Docker Compose. This approach is a practical application of the **defense-in-depth** security principle, creating multiple layers of protection around the most sensitive asset: the database.
+
+* **`frontend-network`:** This network connects the public-facing HAProxy container to the Flask web application container. It acts as a semi-trusted zone where the load balancer can forward legitimate user traffic to the application server.
+* **`backend-network`:** This is a completely isolated, private network that connects *only* the Flask web application container to the PostgreSQL database container.
+
+The security implications of this design are significant. The database container has **no network route** to the outside world and is not attached to the `frontend-network`. Therefore, an attacker cannot connect to the database directly. This multi-step requirement dramatically reduces the application's **attack surface** and makes a successful breach significantly more difficult, demonstrating a mature approach to cloud security.
+
+---
+
+## Application Showcase
+
+The following images demonstrate the core functionalities of the Public Notes application.
+
+### Main User Interface
+![Main Page](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/mainpage.jpg)
+**Caption:** The main dashboard provides a consolidated view of all existing notes and serves as the central hub for accessing other features.
+
+### Creating a New Note
+![New Note Window](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/new_note_window.jpg)
+
+**Caption:** Users can add new notes to the database through this intuitive modal window, specifying the content, associated tags, and user email.
+
+### Deleting a Note
+![Deleting a Note](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/remove_window.jpg)
+
+**Caption:** The application provides a straightforward mechanism for removing notes from the database.
+
+### Filtering Notes by Tag
+![Filtering by Tag](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/search_per_tag.jpg)
+**Caption:** A powerful search function allows users to filter the notes based on tags, making it easy to find relevant information quickly.
+
+### Filtering Notes by User
+![Filtering by User](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/search_per_user.jpg)
+**Caption:** For multi-user contexts, notes can be filtered by the creator's email address, allowing for personalized views of the data.
+
+---
+---
+---
  
-After it, launch the configuration file that already launches the minikube and config everything.
+## Getting Started: A Comprehensive Guide
 
-To launch the application, runs:
-minikube service haproxy
+This section provides detailed, step-by-step instructions for cloning the repository, setting up the necessary environment, and deploying the application.
 
+### Prerequisites
+
+Before you begin, ensure you have the following software installed on your system. It is highly recommended to follow the official installation guides for each tool.
+
+* **Git**
+* **Docker Engine & Docker Compose** (Docker Desktop is recommended)
+* **Minikube**
+* **kubectl**
+
+### Initial Project Setup
+
+1.  **Clone the repository:**
+    ```bash
+    git clone [https://github.com/LucasDuarte026/cloud_computing.git](https://github.com/LucasDuarte026/cloud_computing.git)
+    ```
+
+2.  **Navigate to the project directory:**
+    ```bash
+    cd cloud_computing/project/public-notes
+    ```
+
+### Deployment Instructions
+
+#### Deployment Option A: Docker Compose (Recommended for Local Development)
+
+This method uses the `docker-compose.yml` file to automatically build images, configure networks, and launch all services.
+
+**Execution Steps:**
+
+1.  **Build and Launch:**
+    From the `project/public-notes` directory, run the following commands.
+    ```bash
+    docker-compose build
+    docker-compose up -d
+    ```
+
+2.  **Access the Application:**
+    Open your browser and navigate to `http://localhost`.
+
+![Docker Compose Launch](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/docker_compose_launch.jpg)
+*Caption: Example output after successfully launching the application with Docker Compose.*
+
+**Teardown:**
+```bash
+docker-compose down --volumes
