@@ -1,3 +1,3 @@
 # Project Cloud Computing 
 
-all make based in Opensuse LEAP 15.5
+all made based on Opensuse LEAP 15.5
