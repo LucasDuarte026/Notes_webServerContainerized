@@ -2,7 +2,7 @@
 
 ![Language](https://img.shields.io/badge/Language-Python-blue.svg) ![Framework](https://img.shields.io/badge/Framework-Flask-green.svg) ![Database](https://img.shields.io/badge/Database-PostgreSQL-purple.svg) ![Containerization](https://img.shields.io/badge/Containerization-Docker-blue.svg) ![Orchestration](https://img.shields.io/badge/Orchestration-Kubernetes-blue.svg) ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
- -     # How to install and run the project can be found below! 
+## How to install and run the project can be found below! 
 
 ## Introduction
 
@@ -192,14 +192,16 @@ This deployment method demonstrates how to run the application in a local Kubern
     ```
     You should see pods for **haproxy**, the **flask-app**, and **postgres** in the `Running` state.
 
-    ![Minikube Launch](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/launch_haproxy.jpg)
-    ***Caption**: Verifying the successful deployment of pods within the Minikube cluster.*
-
+  
 3.  **Access the Application:**
     To access the application, use the `minikube service` command. This command automatically creates a network tunnel to the `haproxy-service` within the cluster and opens the application's URL in your default web browser.
     ```bash
     minikube service haproxy
     ```
+  ![Minikube Launch](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/launch_haproxy.jpg)
+    ***Caption**: Verifying the successful deployment of pods within the Minikube cluster.*
+
+    
 ---
 
 ## Conclusion
