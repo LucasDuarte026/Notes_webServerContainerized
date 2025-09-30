@@ -73,22 +73,16 @@ The following images demonstrate the core functionalities of the Public Notes ap
 **Caption:** The main dashboard provides a consolidated view of all existing notes and serves as the central hub for accessing other features.
 
 ### Creating a New Note
-<div style="max-width: 300px; overflow: hidden; border: 1px solid #ddd; border-radius: 8px;">
-  <img 
-    src="https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/new_note_window.jpg" 
-    alt="New Note Window" 
-    style="width: 100%; transform: scale(1.05);">
-</div>
 
-**Caption:** Users can add new notes to the database through this intuitive modal window, specifying the content, associated tags, and user email.
+<p align="center">
+  <img src="https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/new_note_window.jpg" alt="Create Note" width="200"/>
+</p>
 
 ### Deleting a Note
-<div style="max-width: 300px; overflow: hidden; border: 1px solid #ddd; border-radius: 8px;">
-  <img 
-    src="https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/remove_window.jpg" 
-    alt="New Note Window" 
-    style="width: 95%; transform: scale(1.05);">
-</div>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/remove_window.jpg" alt="Delete Note" width="200"/>
+</p>
 
 
 **Caption:** The application provides a straightforward mechanism for removing notes from the database.
