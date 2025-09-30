@@ -68,32 +68,47 @@ The security implications of this design are significant. The database container
 
 The following images demonstrate the core functionalities of the Public Notes application.
 
+<div align="center">
+
 ### Main User Interface
+
 ![Main Page](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/mainpage.jpg)
+
 **Caption:** The main dashboard provides a consolidated view of all existing notes and serves as the central hub for accessing other features.
+
+---
 
 ### Creating a New Note
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/new_note_window.jpg" alt="Create Note" width="200"/>
-</p>
+![Create Note](./images/new_note_window.jpg)
+
+**Caption:** Easily add new notes through a simple and intuitive interface.
+
+---
 
 ### Deleting a Note
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/remove_window.jpg" alt="Delete Note" width="200"/>
-</p>
-
+![Delete Note](./images/remove_window.jpg)
 
 **Caption:** The application provides a straightforward mechanism for removing notes from the database.
 
+---
+
 ### Filtering Notes by Tag
-![Filtering by Tag](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/search_per_tag.jpg)
+
+![Filtering by Tag](./images/search_per_tag.jpg)
+
 **Caption:** A search function allows users to filter the notes based on tags, making it easy to find relevant information quickly.
 
+---
+
 ### Filtering Notes by User
-![Filtering by User](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/search_per_user.jpg)
+
+![Filtering by User](./main/images/search_per_user.jpg)
+
 **Caption:** For multi-user contexts, notes can be filtered by the creator's email address, allowing for personalized views of the data.
+
+</div>
 
 ---
 ---
@@ -142,8 +157,13 @@ This method uses the `docker-compose.yml` file to automatically build images, co
 2.  **Access the Application:**
     Open your browser and navigate to `http://localhost`.
 
+<div align="center">
+
 ![Docker Compose Launch](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/docker_compose_launch.jpg)
+
 ***Caption**: Example output after successfully launching the application with Docker Compose.*
+
+</div>
  
 ---
 ### Deployment Option B: Kubernetes with Minikube
@@ -192,9 +212,14 @@ This deployment method demonstrates how to run the application in a local Kubern
     ```bash
     minikube service haproxy
     ```
-  ![Minikube Launch](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/launch_haproxy.jpg)
-    ***Caption**: Verifying the successful deployment of pods within the Minikube cluster.*
 
+<div align="center">
+
+![Minikube Launch](https://raw.githubusercontent.com/LucasDuarte026/cloud_computing/main/images/launch_haproxy.jpg)
+
+***Caption**: Verifying the successful deployment of pods within the Minikube cluster.*
+
+</div>
     
 ---
 
