@@ -76,37 +76,33 @@ The following images demonstrate the core functionalities of the Public Notes ap
 
 **Caption:** The main dashboard provides a consolidated view of all existing notes and serves as the central hub for accessing other features.
 
----
-
-### Creating a New Note
-
-![Create Note](./images/new_note_window.jpg)
-
-**Caption:** Easily add new notes through a simple and intuitive interface.
-
----
-
-### Deleting a Note
-
-![Delete Note](./images/remove_window.jpg)
-
-**Caption:** The application provides a straightforward mechanism for removing notes from the database.
-
----
-
+ 
 ### Filtering Notes by Tag
 
 ![Filtering by Tag](./images/search_per_tag.jpg)
 
 **Caption:** A search function allows users to filter the notes based on tags, making it easy to find relevant information quickly.
 
----
-
+ 
 ### Filtering Notes by User
 
-![Filtering by User](./main/images/search_per_user.jpg)
+![Filtering by User](./images/search_per_user.jpg)
 
 **Caption:** For multi-user contexts, notes can be filtered by the creator's email address, allowing for personalized views of the data.
+
+ 
+### Creating a New Note <div style="transform: scale(0.7); display: inline-block; vertical-align: middle;">
+
+![Create Note](./images/new_note_window.jpg)
+
+**Caption:** Easily add new notes through a simple and intuitive interface.
+
+ 
+### Deleting a Note <div style="transform: scale(0.7); display: inline-block; vertical-align: middle;">
+
+![Delete Note](./images/remove_window.jpg)
+
+**Caption:** The application allows users to remove notes directly from the interface.
 
 </div>
 
