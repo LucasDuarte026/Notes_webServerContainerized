@@ -1,7 +1,0 @@
-FROM debian:12
-
-RUN apt update && apt install apache2 libapache2-mod-php mariadb-server -y
-RUN echo "first tryout" 
-
-RUN service mariadb
-CMD [ "/usr/sbin/apachectl", "-D", "example"]
