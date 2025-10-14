@@ -1,6 +1,7 @@
 # Public Notes: A Multi-Tier Cloud Application with Docker and Kubernetes
 
 ![Language](https://img.shields.io/badge/Language-Python-blue.svg) ![Framework](https://img.shields.io/badge/Framework-Flask-green.svg) ![Database](https://img.shields.io/badge/Database-PostgreSQL-purple.svg) ![Containerization](https://img.shields.io/badge/Containerization-Docker-blue.svg) ![Orchestration](https://img.shields.io/badge/Orchestration-Kubernetes-blue.svg) ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+> 🇩🇪 Developed in Germany  🇩🇪
 
 ## How to install and run the project can be found below! 
 
