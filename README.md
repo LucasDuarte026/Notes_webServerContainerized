@@ -50,15 +50,45 @@ The development of this application was guided by a formal set of technical obje
 
 The application is structured according to the time-tested three-tier architectural model, which separates concerns into logical and physical layers. This separation enhances maintainability, scalability, and security.
 
-* **Presentation Tier (HAProxy):** This is the outermost layer and the sole entry point for all user traffic. It is implemented using an HAProxy container. Its primary responsibility is to act as a reverse proxy, receiving incoming HTTP requests and forwarding them to the application tier. This layer insulates the internal system from direct external exposure.
-* **Logic/Application Tier (Python/Flask):** This middle tier contains the core business logic of the application. The Python Flask server processes requests forwarded by the presentation tier, executes application logic (e.g., creating, deleting, or searching for notes), and interacts with the data tier to persist and retrieve information.
-* **Data Tier (PostgreSQL):** The innermost tier is responsible for all aspects of data storage and management. It consists of a PostgreSQL database running in its own container. This tier is completely isolated and only accepts connections from the trusted application tier, ensuring the security and integrity of the application's data.
+<table valign="top">
+  <tr>
+    <td width="60%">
+      <ul>
+          <li>
+              <strong>Presentation Tier (HAProxy):</strong>
+              <p>
+                  This is the outermost layer and the sole entry point for all user traffic. It is implemented using an HAProxy container. Its primary responsibility is to act as a reverse proxy, receiving incoming HTTP requests and forwarding them to the application tier. This layer insulates the internal system from direct external exposure.
+              </p>
+          </li>
+          <li>
+              <strong>Logic/Application Tier (Python/Flask):</strong>
+              <p>
+                  This middle tier contains the core business logic of the application. The Python Flask server processes requests forwarded by the presentation tier, executes application logic (e.g., creating, deleting, or searching for notes), and interacts with the data tier to persist and retrieve information.
+              </p>
+          </li>
+          <li>
+              <strong>Data Tier (PostgreSQL):</strong>
+              <p>
+                   The innermost tier is responsible for all aspects of data storage and management. It consists of a PostgreSQL database running in its own container. This tier is completely isolated and only accepts connections from the trusted application tier, ensuring the security and integrity of the application's data.
+              </p>
+          </li>
+      </ul>
+    </td>
+    <td width="40%">
+      <img src="https://github.com/LucasDuarte026/Notes_webServerContainerized/blob/main/images/reverse_proxy.jpg" 
+           alt="3-Tier Architecture Diagram" 
+           onerror="this.onerror=null; this.src='https://placehold.co/600x400/E2E8F0/4A5568?text=Image+Not+Found';">
+    </td>
+  </tr>
+</table>
+
+---
 
 ### The Secure Networking Strategy
 
 A cornerstone of this project's architecture is its secure networking topology, which is implemented using a dual-network design within Docker Compose. This approach is a practical application of the **defense-in-depth** security principle, creating multiple layers of protection around the most sensitive asset: the database.
 
-* **`frontend-network`:** This network connects the public-facing HAProxy container to the Flask web application container. It acts as a semi-trusted zone where the load balancer can forward legitimate user traffic to the application server.
+* **`frontend-network`:** This network connects the public-facing HAProxy container to the Flask web application container. It acts as a semi-trusted zone where the load balancer can forward legitimate user traffic to the application server.A
 * **`backend-network`:** This is a completely isolated, private network that connects *only* the Flask web application container to the PostgreSQL database container.
 
 The security implications of this design are significant. The database container has **no network route** to the outside world and is not attached to the `frontend-network`. Therefore, an attacker cannot connect to the database directly. This multi-step requirement dramatically reduces the application's **attack surface** and makes a successful breach significantly more difficult, demonstrating a mature approach to cloud security.
